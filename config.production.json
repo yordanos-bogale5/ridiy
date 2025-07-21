@@ -1,0 +1,32 @@
+{
+  "purchaseCode": "demo-purchase-code",
+  "backendMapsAPIKey": "AIzaSyDJOJm4_qAUIAU5jVpJoAhHwbSPL9KwJBc",
+  "adminPanelAPIKey": "production-admin-key-2024",
+  "firebaseProjectPrivateKey": "demo-firebase.json",
+  "versionNumber": 1,
+  "companyLogo": "",
+  "companyName": "Mechili Taxi",
+  "taxi": {
+    "logo": "",
+    "name": "Mechili Taxi",
+    "color": {
+      "primary": "#1976d2",
+      "secondary": "#424242"
+    }
+  },
+  "mysqlHost": "mysql",
+  "mysqlPort": 3306,
+  "mysqlUser": "ridy_user",
+  "mysqlPassword": "RidyUser2024!",
+  "mysqlDatabase": "ridy",
+  "redisHost": "redis",
+  "redisPort": 6379,
+  "redisPassword": "",
+  "redisDb": 0,
+  "jwtSecret": "your-super-secret-jwt-key-production-2024",
+  "domain": "https://mechili.net",
+  "adminPanelUrl": "https://mechili.net",
+  "driverApiUrl": "https://mechili.net/api/driver",
+  "riderApiUrl": "https://mechili.net/api/rider",
+  "adminApiUrl": "https://mechili.net/api/admin"
+}

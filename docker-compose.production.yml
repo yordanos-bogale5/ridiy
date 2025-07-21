@@ -1,0 +1,162 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: ridy-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: RidyTaxi2024!
+      MYSQL_DATABASE: ridy
+      MYSQL_USER: ridy_user
+      MYSQL_PASSWORD: RidyUser2024!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - ridy-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: ridy-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ridy-network
+
+  # Admin API
+  admin-api:
+    build:
+      context: .
+      dockerfile: apps/admin-api/Dockerfile
+    container_name: ridy-admin-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=ridy_user
+      - DB_PASSWORD=RidyUser2024!
+      - DB_DATABASE=ridy
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=your-super-secret-jwt-key-here
+      - GOOGLE_MAPS_API_KEY=AIzaSyDJOJm4_qAUIAU5jVpJoAhHwbSPL9KwJBc
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - ridy-network
+
+  # Driver API
+  driver-api:
+    build:
+      context: .
+      dockerfile: apps/driver-api/Dockerfile
+    container_name: ridy-driver-api
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=ridy_user
+      - DB_PASSWORD=RidyUser2024!
+      - DB_DATABASE=ridy
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=your-super-secret-jwt-key-here
+      - GOOGLE_MAPS_API_KEY=AIzaSyDJOJm4_qAUIAU5jVpJoAhHwbSPL9KwJBc
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - ridy-network
+
+  # Rider API
+  rider-api:
+    build:
+      context: .
+      dockerfile: apps/rider-api/Dockerfile
+    container_name: ridy-rider-api
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=ridy_user
+      - DB_PASSWORD=RidyUser2024!
+      - DB_DATABASE=ridy
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=your-super-secret-jwt-key-here
+      - GOOGLE_MAPS_API_KEY=AIzaSyDJOJm4_qAUIAU5jVpJoAhHwbSPL9KwJBc
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - ridy-network
+
+  # Admin Panel (Angular)
+  admin-panel:
+    build:
+      context: .
+      dockerfile: apps/admin-panel/Dockerfile
+    container_name: ridy-admin-panel
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - admin-api
+    networks:
+      - ridy-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: ridy-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites-available:/etc/nginx/sites-available
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - admin-api
+      - driver-api
+      - rider-api
+      - admin-panel
+    networks:
+      - ridy-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  ridy-network:
+    driver: bridge

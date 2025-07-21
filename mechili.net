@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    server_name mechili.net;
+
+    location / {
+        root /root/codecanyon-LC7bQZ6U-ridy-flutter-full-taxi-solution/dist/apps/admin-panel;
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://localhost:3000/;
+    }
+}
