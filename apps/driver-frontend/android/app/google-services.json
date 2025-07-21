@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "928386318743",
+    "firebase_url": "https://plasma-outcome-451216-f6-default-rtdb.firebaseio.com",
+    "project_id": "plasma-outcome-451216-f6",
+    "storage_bucket": "plasma-outcome-451216-f6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928386318743:android:dbb1a75815c25ff6a204d2",
+        "android_client_info": {
+          "package_name": "com.ridy.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyb4Z2TseXcB_-dgBiyNv7UsQwSygKLLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

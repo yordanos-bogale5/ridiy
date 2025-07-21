@@ -1,0 +1,205 @@
+<!-- Service Selection Header -->
+<nz-card nzTitle="Service Selection" class="mb-4">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+      <nz-icon nzType="car" nzTheme="outline" class="text-blue-600 text-xl mr-3"></nz-icon>
+      <div>
+        <h4 class="text-lg font-semibold text-gray-800 mb-1">Choose Your Service</h4>
+        <p class="text-gray-600">Select the service type for this booking. Prices are calculated based on the selected route.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Time Selection -->
+  <div class="mb-6">
+    <h5 class="text-gray-800 font-semibold mb-3 flex items-center">
+      <nz-icon nzType="clock-circle" nzTheme="outline" class="mr-2"></nz-icon>
+      Booking Time
+    </h5>
+    <nz-date-picker
+      [(ngModel)]="time"
+      nzShowTime
+      nzFormat="yyyy-MM-dd HH:mm"
+      nzPlaceHolder="Select booking time"
+      class="w-full max-w-md">
+    </nz-date-picker>
+    <p class="text-sm text-gray-500 mt-2">
+      <nz-icon nzType="info-circle" nzTheme="outline" class="mr-1"></nz-icon>
+      Leave as current time for immediate booking
+    </p>
+  </div>
+</nz-card>
+
+<!-- Services Loading State -->
+<nz-card *ngIf="(query | async)?.loading" class="text-center">
+  <div class="py-12">
+    <nz-spin nzSize="large"></nz-spin>
+    <p class="mt-4 text-gray-600 text-lg">Loading available services...</p>
+  </div>
+</nz-card>
+
+<!-- Services Display -->
+<nz-card *ngIf="(query | async)?.data?.calculateFare as fareData; else showMockServices" nzTitle="Available Services">
+  <div *ngFor="let category of fareData.services" class="mb-8 last:mb-0">
+    <h3 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+      <nz-icon nzType="tags" nzTheme="outline" class="mr-2 text-blue-600"></nz-icon>
+      {{ category.name }}
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <nz-card *ngFor="let service of category.services"
+               class="service-card cursor-pointer transition-all duration-200 hover:shadow-lg"
+               (click)="selectService(service)"
+               [nzBodyStyle]="{ padding: '20px' }"
+               nzHoverable>
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ service.name }}</h4>
+            <p class="text-sm text-gray-600">Premium taxi service</p>
+          </div>
+          <div class="text-right ml-4">
+            <div class="text-2xl font-bold text-blue-600">
+              {{ service.cost | currency: fareData.currency }}
+            </div>
+            <p class="text-xs text-gray-500">Estimated fare</p>
+          </div>
+        </div>
+
+        <nz-divider class="my-3"></nz-divider>
+
+        <div class="flex justify-between text-sm text-gray-600">
+          <div class="flex items-center">
+            <nz-icon nzType="environment" nzTheme="outline" class="mr-1"></nz-icon>
+            <span>{{ fareData.distance | number:'1.1-1' }} km</span>
+          </div>
+          <div class="flex items-center">
+            <nz-icon nzType="clock-circle" nzTheme="outline" class="mr-1"></nz-icon>
+            <span>{{ fareData.duration | number:'1.0-0' }} min</span>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <nz-button nzType="primary" nzSize="small" class="w-full">
+            <nz-icon nzType="check-circle" nzTheme="outline"></nz-icon>
+            Select Service
+          </nz-button>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</nz-card>
+
+<!-- Mock Services Fallback -->
+<ng-template #showMockServices>
+  <nz-card nzTitle="Available Services">
+    <nz-alert
+      nzType="info"
+      nzMessage="Service Configuration"
+      nzDescription="Services are being configured. You can proceed with the available service options below."
+      nzShowIcon
+      class="mb-6">
+    </nz-alert>
+
+
+
+    <div *ngFor="let category of mockServices.services" class="mb-8 last:mb-0">
+      <h3 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+        <nz-icon nzType="tags" nzTheme="outline" class="mr-2 text-blue-600"></nz-icon>
+        {{ category.name }}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <nz-card *ngFor="let service of category.services"
+                 class="service-card cursor-pointer transition-all duration-200 hover:shadow-lg"
+                 (click)="selectService(service)"
+                 [nzBodyStyle]="{ padding: '20px' }"
+                 nzHoverable>
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ service.name }}</h4>
+              <p class="text-sm text-blue-600 font-medium">✨ Click to proceed to driver search</p>
+            </div>
+            <div class="text-right ml-4">
+              <div class="text-2xl font-bold text-blue-600">
+                {{ service.cost | currency: mockServices.currency }}
+              </div>
+              <p class="text-xs text-gray-500">Estimated fare</p>
+            </div>
+          </div>
+
+          <nz-divider class="my-3"></nz-divider>
+
+          <div class="flex justify-between text-sm text-gray-600">
+            <div class="flex items-center">
+              <nz-icon nzType="car" nzTheme="outline" class="mr-1"></nz-icon>
+              <span>Standard service</span>
+            </div>
+            <div class="flex items-center">
+              <nz-icon nzType="clock-circle" nzTheme="outline" class="mr-1"></nz-icon>
+              <span>Available now</span>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <nz-button nzType="primary" nzSize="small" class="w-full">
+              <nz-icon nzType="check-circle" nzTheme="outline"></nz-icon>
+              Select Service
+            </nz-button>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  </nz-card>
+</ng-template>
+
+<!-- Error State -->
+<nz-card *ngIf="(query | async)?.error" class="text-center">
+  <nz-result
+    nzStatus="error"
+    nzTitle="Failed to Load Services"
+    nzSubTitle="There was an error loading the available services. Please try again.">
+    <div nz-result-extra>
+      <nz-button nzType="primary" (click)="ngOnInit()">
+        <nz-icon nzType="reload" nzTheme="outline"></nz-icon>
+        Retry
+      </nz-button>
+    </div>
+  </nz-result>
+</nz-card>
+
+<!-- Loading State for Order Creation -->
+<div *ngIf="isCreatingOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <nz-card class="max-w-md mx-4">
+    <div class="text-center py-6">
+      <nz-spin nzSize="large"></nz-spin>
+      <h3 class="mt-4 text-lg font-semibold text-gray-800">Creating Your Booking</h3>
+      <p class="mt-2 text-gray-600">Please wait while we process your request...</p>
+
+      <!-- Emergency cancel button -->
+      <div class="mt-6">
+        <nz-button nzType="default" nzDanger (click)="cancelCreation()">
+          <nz-icon nzType="close" nzTheme="outline"></nz-icon>
+          Cancel
+        </nz-button>
+      </div>
+    </div>
+  </nz-card>
+</div>
+
+<!-- Navigation -->
+<nz-card class="mt-6">
+  <div class="flex justify-between items-center">
+    <nz-button nzType="default" nzSize="large" routerLink="../locations-select" [queryParamsHandling]="'preserve'">
+      <nz-icon nzType="arrow-left" nzTheme="outline"></nz-icon>
+      Back to Locations
+    </nz-button>
+
+    <div class="flex items-center text-gray-600">
+      <nz-icon nzType="check-circle" nzTheme="outline" class="mr-2 text-green-600"></nz-icon>
+      <span class="font-medium">Step 3 of 4: Select Service</span>
+    </div>
+
+    <div class="text-sm text-gray-500">
+      Next: Looking for Driver
+    </div>
+  </div>
+</nz-card>

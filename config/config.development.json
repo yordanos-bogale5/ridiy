@@ -1,0 +1,26 @@
+{
+  "purchaseCode": "demo-purchase-code",
+  "backendMapsAPIKey": "pk.eyJ1IjoibGVtYXR0MzMiLCJhIjoiY21jZW4zZHVhMDAwZzJrczU0dHY3YTd1aiJ9.7MalJZjkCbC5dXB8RfvC3Q",
+  "adminPanelAPIKey": "demo-key",
+  "firebaseProjectPrivateKey": "demo-firebase.json",
+  "versionNumber": 1,
+  "companyLogo": "",
+  "companyName": "Ridy Demo",
+  "taxi": {
+    "logo": "",
+    "name": "Ridy Taxi",
+    "color": {
+      "primary": "#1976d2",
+      "secondary": "#424242"
+    }
+  },
+  "mysqlHost": "localhost",
+  "mysqlPort": 3306,
+  "mysqlUser": "root",
+  "mysqlPassword": "",
+  "mysqlDatabase": "ridy",
+  "redisHost": "localhost",
+  "redisPort": 6379,
+  "redisPassword": "",
+  "redisDb": 0
+}

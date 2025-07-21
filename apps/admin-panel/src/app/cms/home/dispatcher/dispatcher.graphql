@@ -1,0 +1,81 @@
+query DispatcherCalculateFare($points: [PointInput!]!, $riderId: ID) {
+  calculateFare(
+    input: { points: $points, riderId: $riderId, orderType: Ride }
+  ) {
+    currency
+    distance
+    duration
+    services {
+      name
+      services {
+        id
+        name
+        cost
+      }
+    }
+  }
+}
+
+mutation CreateOrder(
+  $riderId: ID
+  $guestPhoneNumber: String
+  $guestPhoneCountryCode: String
+  $points: [PointInput!]!
+  $addresses: [String!]!
+  $serviceId: ID!
+  $intervalMinutes: Int!
+  $waitingTimeMinutes: Int
+  $driverId: ID
+  $twoWay: Boolean
+  $optionIds: [ID!]
+) {
+  createOrder(
+    input: {
+      points: $points
+      serviceId: $serviceId
+      addresses: $addresses
+      intervalMinutes: $intervalMinutes
+      waitingTimeMinutes: $waitingTimeMinutes
+      riderId: $riderId
+      guestPhoneNumber: $guestPhoneNumber
+      guestPhoneCountryCode: $guestPhoneCountryCode
+      driverId: $driverId
+      twoWay: $twoWay
+      optionIds: $optionIds
+    }
+  ) {
+    id
+  }
+}
+
+subscription OrderUpdated($id: ID!) {
+  orderUpdated(orderId: $id) {
+    id
+    status
+    driver {
+      firstName
+      lastName
+      mobileNumber
+    }
+  }
+}
+
+mutation CancelOrder($orderId: ID!) {
+  cancelOrder(orderId: $orderId) {
+    id
+    status
+  }
+}
+
+mutation AssignDriverToOrder($orderId: ID!, $driverId: ID!) {
+  assignDriverToOrder(orderId: $orderId, driverId: $driverId) {
+    id
+    status
+    driver {
+      id
+      firstName
+      lastName
+      mobileNumber
+    }
+  }
+}

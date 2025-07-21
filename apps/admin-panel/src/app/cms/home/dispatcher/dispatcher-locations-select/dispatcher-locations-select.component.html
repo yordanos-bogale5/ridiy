@@ -1,0 +1,88 @@
+<!-- Location Input Info -->
+<div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
+  <h4 class="text-blue-800 font-semibold">📍 Location Selection</h4>
+  <p class="text-blue-700 mt-2">Enter pickup and destination addresses below. The system will automatically geocode them for you.</p>
+  <p class="text-sm text-blue-600 mt-1">Powered by MapBox and OpenStreetMap geocoding services.</p>
+</div>
+
+<!-- Address Input -->
+<div class="mb-4">
+  <h4 class="text-lg font-semibold mb-3">📍 Enter Locations</h4>
+
+  <!-- Pickup Location -->
+  <div class="mb-3">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Pickup Location:</label>
+    <input
+      nz-input
+      [(ngModel)]="manualPickupAddress"
+      placeholder="Enter pickup address (e.g., 123 Main St, City, State)"
+      class="w-full"
+      (keyup.enter)="addManualLocation(manualPickupAddress, 'pickup')"
+    />
+    <button
+      nz-button
+      nzType="primary"
+      nzSize="small"
+      class="mt-2"
+      (click)="addManualLocation(manualPickupAddress, 'pickup')"
+      [disabled]="!manualPickupAddress?.trim()"
+    >
+      Add Pickup Location
+    </button>
+  </div>
+
+  <!-- Destination Location -->
+  <div class="mb-3">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Destination:</label>
+    <input
+      nz-input
+      [(ngModel)]="manualDestinationAddress"
+      placeholder="Enter destination address (e.g., 456 Oak Ave, City, State)"
+      class="w-full"
+      (keyup.enter)="addManualLocation(manualDestinationAddress, 'destination')"
+    />
+    <button
+      nz-button
+      nzType="primary"
+      nzSize="small"
+      class="mt-2"
+      (click)="addManualLocation(manualDestinationAddress, 'destination')"
+      [disabled]="!manualDestinationAddress?.trim()"
+    >
+      Add Destination
+    </button>
+  </div>
+</div>
+
+<!-- Google Maps Interface (when API key is available) -->
+<div *ngIf="isGoogleMapsLoaded">
+  <google-map height="700px" width="100%" (mapClick)="mapClicked($event)">
+    <map-marker #marker *ngFor="let markerPosition of drivers" [position]="markerPosition.location"
+      [options]="{ draggable: false }"
+      [title]="markerPosition.driverId.toString()"></map-marker>
+    <map-marker *ngFor="let point of points" [position]="point.location" [options]="{ draggable: false }"
+      [title]="point.address"></map-marker>
+  </google-map>
+</div>
+
+<!-- Fallback when Google Maps is not loaded -->
+<div *ngIf="!isGoogleMapsLoaded" class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
+  <h4 class="text-lg font-semibold mb-2 text-yellow-800">⚠️ Google Maps Loading</h4>
+  <p class="text-yellow-700">Google Maps is loading or not available. You can still add locations manually using the input fields below.</p>
+</div>
+    <nz-card>
+    <nz-timeline class="pt-16">
+      <nz-timeline-item *ngFor="let point of points">{{point.address}}</nz-timeline-item>
+    </nz-timeline>
+  </nz-card>
+    <div class="flex gap-2 mt-4">
+      <button nz-button nzDanger (click)="removeLastPoint()" [disabled]="points.length === 0">
+        <span nz-icon nzType="delete" nzTheme="outline"></span>
+        <span>{{'dispatcher.removeLastPoint' | translate }}</span>
+      </button>
+      <button nz-button nzType="primary" (click)="goToServiceSelection()" [disabled]="points.length === 0">
+        <span nz-icon nzType="arrow-right" nzTheme="outline"></span>
+        <span>{{'profile.next' | translate }}</span>
+      </button>
+    </div>
+

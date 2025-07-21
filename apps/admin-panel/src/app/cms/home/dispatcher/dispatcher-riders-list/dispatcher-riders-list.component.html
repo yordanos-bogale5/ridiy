@@ -1,0 +1,121 @@
+<nz-table #table nzShowSizeChanger [nzFrontPagination]="false" *ngIf="(query | async)?.data?.riders as riders"
+  [nzData]="riders.nodes" [nzTotal]="riders.totalCount" (nzQueryParams)="tableService.onTableQueryParamsChange($event)"
+  nzBordered>
+  <thead>
+    <tr>
+      <th nzCustomFilter nzColumnKey="lastName" [nzSortFn]="true">
+        {{ 'profile.name' | translate }}
+        <nz-filter-trigger [nzActive]="(route.queryParams | async)?.filter?.includes('lastName|like|')"
+          [nzDropdownMenu]="filtername">
+          <i nz-icon nzType="search"></i>
+        </nz-filter-trigger>
+      </th>
+      <th nzCustomFilter nzColumnKey="mobileNumber" [nzSortFn]="true">
+        {{ 'profile.mobileNumber' | translate }}
+        <nz-filter-trigger [nzActive]="(route.queryParams | async)?.filter?.includes('mobileNumber|like|')"
+          [nzDropdownMenu]="filtermobile">
+          <i nz-icon nzType="search"></i>
+        </nz-filter-trigger>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of table.data" (click)="selectRider(data.id)" class="group cursor-pointer">
+      <td>
+        <div nz-typography>
+          {{ data.firstName }} {{ data.lastName }}
+        </div>
+      </td>
+      <td><a [href]="'tel:+' + data.mobileNumber">{{ data.mobileNumber | phone }}</a></td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<div class="mt-6">
+  <h3>📱 Create Booking for Passenger</h3>
+  <p class="text-gray-600 mb-4">Enter the passenger's phone number to create a booking. The system will automatically check if they are already registered.</p>
+
+  <form [formGroup]="guestForm" (ngSubmit)="submitGuest()" novalidate>
+    <div class="flex flex-row items-center gap-2 mb-3">
+      <input
+        formControlName="guestPhoneCountryCode"
+        nz-input
+        style="width: 80px;"
+        placeholder="+1"
+        maxlength="5"
+        required
+      />
+      <input
+        formControlName="guestPhoneNumber"
+        nz-input
+        style="width: 200px;"
+        placeholder="Phone Number (e.g. 1234567890)"
+        required
+      />
+      <button
+        nz-button
+        nzType="primary"
+        type="submit"
+        [nzLoading]="checkingPhone"
+        [disabled]="guestForm.invalid || checkingPhone">
+        {{ existingRider ? 'Book for ' + existingRider.firstName : 'Create Booking' }}
+      </button>
+    </div>
+
+    <!-- Phone number status message -->
+    <div *ngIf="phoneCheckMessage" class="mb-3">
+      <div [ngClass]="{
+        'text-green-600': existingRider,
+        'text-blue-600': !existingRider && phoneCheckMessage.includes('New passenger'),
+        'text-orange-600': checkingPhone,
+        'text-red-500': phoneCheckMessage.includes('Unable')
+      }" class="text-sm font-medium">
+        {{ phoneCheckMessage }}
+      </div>
+
+      <!-- Show existing rider details -->
+      <div *ngIf="existingRider" class="mt-2 p-3 bg-green-50 border border-green-200 rounded">
+        <div class="text-sm">
+          <strong>Existing Passenger Details:</strong><br>
+          Name: {{ existingRider.firstName }} {{ existingRider.lastName }}<br>
+          Phone: {{ existingRider.mobileNumber }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Validation errors -->
+    <div *ngIf="submitted && guestForm.controls['guestPhoneNumber'].invalid" class="text-red-500 text-xs mt-1">
+      Please enter a valid phone number (7-15 digits).
+    </div>
+    <div *ngIf="submitted && guestForm.controls['guestPhoneCountryCode'].invalid" class="text-red-500 text-xs mt-1">
+      Please enter a country code (e.g. +1).
+    </div>
+  </form>
+</div>
+
+<nz-dropdown-menu #filtername="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input nz-input #lastNameInput placeholder="{{ 'profile.lastName' | translate }}" />
+      <button nz-button nzSize="small" nzType="primary"
+        (click)="tableService.filterText('lastName', lastNameInput.value)" class="search-button">
+        {{ 'profile.search' | translate }}
+      </button>
+      <button nz-button nzSize="small" (click)="tableService.resetFilter('lastName', lastNameInput)">{{
+        'profile.reset' | translate }}</button>
+    </div>
+  </div>
+</nz-dropdown-menu>
+<nz-dropdown-menu #filtermobile="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input #mobileNumberInput nz-input placeholder="Search Mobile Number">
+      <button nz-button nzSize="small" nzType="primary" class="search-button"
+        (click)="tableService.filterText('mobileNumber', mobileNumberInput.value)">
+        {{ 'profile.search' | translate }}
+      </button>
+      <button nz-button nzSize="small" (click)="tableService.resetFilter('mobileNumber', mobileNumberInput)">{{
+        'profile.reset' | translate }}</button>
+    </div>
+  </div>
+</nz-dropdown-menu>

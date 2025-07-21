@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/admin-api"
+    },
+    {
+      "path": "./apps/admin-panel"
+    },
+    {
+      "path": "./apps/driver-api"
+    },
+    {
+      "path": "./apps/rider-api"
+    },
+    {
+      "path": "./libs/database"
+    }
+  ]
+}
